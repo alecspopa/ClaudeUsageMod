@@ -13,7 +13,7 @@ export type UsageRange = 'today' | 'yesterday' | 'month'
 
 declare module 'claude-code' {
   interface PluginState {
-    'open-usage': {
+    'claude-usage': {
       scan: UsageScan | null
       limits: UsageLimit[]
       error: string | null

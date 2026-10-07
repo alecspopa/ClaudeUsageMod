@@ -1,5 +1,5 @@
 {
-  "name": "open-usage",
+  "name": "claude-usage",
   "version": "0.1.0",
   "description": "A band above the prompt with the cost, tokens and rate limits of your Claude usage",
   "types": "./types/index.d.ts"

@@ -51,7 +51,7 @@ test('the band shows cost, limits and totals on each surface', async ($, on) => 
 
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await $.ui.mount({
-      plugin: 'open-usage',
+      plugin: 'claude-usage',
       surface,
       component: 'AbovePrompt',
       props: BAND_PROPS,

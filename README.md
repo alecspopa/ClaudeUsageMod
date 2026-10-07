@@ -1,6 +1,6 @@
-# open-usage
+# ClaudeUsageMod
 
-A Claude Code mod that shows your Claude usage in a band above the prompt.
+A Claude Code mod, `claude-usage`, that shows your Claude usage in a band above the prompt.
 
 ```
 Session   [bar]  12% used   ~61% left at reset   resets in 3h 28m
@@ -29,7 +29,7 @@ The band works in the Code tab of the Claude desktop app and in the terminal.
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url> ~/Work/OpenUsageMod
+   git clone <repository-url> ~/Work/ClaudeUsageMod
    ```
 
 2. Add the folder to the `env` block of `~/.claude/settings.json`:
@@ -37,7 +37,7 @@ The band works in the Code tab of the Claude desktop app and in the terminal.
    ```json
    {
      "env": {
-       "CLAUDE_CODE_PLUGIN_DIRS": "/Users/<you>/Work/OpenUsageMod"
+       "CLAUDE_CODE_PLUGIN_DIRS": "/Users/<you>/Work/ClaudeUsageMod"
      }
    }
    ```
@@ -49,19 +49,19 @@ The band works in the Code tab of the Claude desktop app and in the terminal.
 This setting works for the desktop app and for the terminal. To try the mod in one terminal session only, start Claude Code with the folder:
 
 ```bash
-claude --plugin-dir ~/Work/OpenUsageMod
+claude --plugin-dir ~/Work/ClaudeUsageMod
 ```
 
 ## Uninstall
 
-Remove the path from `CLAUDE_CODE_PLUGIN_DIRS` and start a new session. Then you can remove the cache folder `~/.cache/open-usage`.
+Remove the path from `CLAUDE_CODE_PLUGIN_DIRS` and start a new session. Then you can remove the cache folder `~/.cache/claude-usage`.
 
 ## How it works
 
 - **Rate limits:** the mod reads the limits from `$.session.usage()` and from the `session.measure` event. It keeps the last reading, so that a new session shows the limits before its first response.
 - **Cost and tokens:** `scripts/scan.py` reads the transcripts in `~/.claude/projects`, or in `$CLAUDE_CONFIG_DIR/projects` when you set that variable. It reads only the files that changed in the last 30 days.
 - **Duplicates:** a resumed session copies earlier rows. The scan counts each response one time only, by its message id and request id.
-- **Cache:** the scan keeps the result for each file in `~/.cache/open-usage/scan.json`. It reads a file again only when its size or time changes.
+- **Cache:** the scan keeps the result for each file in `~/.cache/claude-usage/scan.json`. It reads a file again only when its size or time changes.
 - **Updates:** the scan runs when the session starts, every 5 minutes, and after each response that costs money.
 
 The cost is an estimate at the API list prices, which are in `PRICES` in `scripts/scan.py`. A subscription does not bill these amounts. Update the table when the prices change.

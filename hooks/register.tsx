@@ -5,9 +5,9 @@ import type { UsageDay, UsageLimit, UsageRange, UsageScan } from '../types'
 
 const SCAN_EVERY_MS = 5 * 60 * 1000
 
-const scan = atom({ plugin: 'open-usage', key: 'scan' } as const, null)
-const limits = atom({ plugin: 'open-usage', key: 'limits' } as const, [])
-const error = atom({ plugin: 'open-usage', key: 'error' } as const, null)
+const scan = atom({ plugin: 'claude-usage', key: 'scan' } as const, null)
+const limits = atom({ plugin: 'claude-usage', key: 'limits' } as const, [])
+const error = atom({ plugin: 'claude-usage', key: 'error' } as const, null)
 
 // --- Formatting ---
 
@@ -136,7 +136,7 @@ async function rescan($: EngineInterface): Promise<void> {
         '/usr/bin/python3',
         `${$.plugin.root}/scripts/scan.py`,
         `${config}/projects`,
-        `${home}/.cache/open-usage/scan.json`,
+        `${home}/.cache/claude-usage/scan.json`,
       ],
       { timeoutMs: 5 * 60 * 1000 },
     )
