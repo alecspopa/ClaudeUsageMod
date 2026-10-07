@@ -2,11 +2,7 @@
 
 A Claude Code mod, `claude-usage`, that shows your Claude usage in a band above the prompt.
 
-```
-Session   [bar]  12% used   ~61% left at reset   resets in 3h 28m
-Weekly    [bar]  2% used    ~98% left at reset   resets in 1d 4h
-Trend     [bars] Today $65.16 · 205.2M tokens    30 Days $3,650.93 · 5.9B tokens
-```
+![The usage band above the prompt in the Claude desktop app](docs/band.png)
 
 The band works in the Code tab of the Claude desktop app and in the terminal.
 
