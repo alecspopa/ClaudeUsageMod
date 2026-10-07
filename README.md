@@ -25,7 +25,7 @@ The band works in the Code tab of the Claude desktop app and in the terminal.
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url> ~/Work/ClaudeUsageMod
+   git clone https://github.com/alecspopa/ClaudeUsageMod.git ~/Work/ClaudeUsageMod
    ```
 
 2. Add the folder to the `env` block of `~/.claude/settings.json`:
