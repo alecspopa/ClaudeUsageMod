@@ -5,6 +5,13 @@ import type { UsageDay, UsageLimit, UsageRange, UsageScan } from '../types'
 
 const SCAN_EVERY_MS = 5 * 60 * 1000
 
+const LINE_HELP =
+  'The gray line on a bar shows how much time of the window passed. ' +
+  'Keep the blue bar left of the line to have some of the limit left at reset.'
+const AMOUNT_HELP =
+  'The amounts are estimates. The mod adds the tokens in your local transcripts ' +
+  'and prices them at the API list prices. Your subscription does not bill these amounts.'
+
 const scan = atom({ plugin: 'claude-usage', key: 'scan' } as const, null)
 const limits = atom({ plugin: 'claude-usage', key: 'limits' } as const, [])
 const error = atom({ plugin: 'claude-usage', key: 'error' } as const, null)
@@ -61,11 +68,6 @@ const WINDOW_MS: Record<string, number> = {
   seven_day: 7 * 24 * 3600 * 1000,
 }
 
-const WINDOW_NAMES: Record<string, string> = {
-  five_hour: '5 hours',
-  seven_day: '7 days',
-}
-
 const LIMIT_NAMES: Record<string, string> = {
   five_hour: 'Session',
   seven_day: 'Weekly',
@@ -74,7 +76,6 @@ const LIMIT_NAMES: Record<string, string> = {
 
 type Window = {
   name: string
-  passed?: string
   used: number
   resetsIn?: number
   elapsed?: number
@@ -89,13 +90,10 @@ function windowOf(limit: UsageLimit, now: number): Window {
   const resetsIn = resetsAt - now
   if (length === undefined) return { name, used: limit.percentUsed, resetsIn }
   const elapsed = Math.min(1, Math.max(0, 1 - resetsIn / length))
-  const passed =
-    `The line shows the time passed: ${duration(elapsed * length)} of ${WINDOW_NAMES[limit.kind]}. ` +
-    'Keep the blue bar left of the line to have some of the limit left at reset.'
   // Too early in the window to project the pace.
-  if (elapsed < 0.02) return { name, used: limit.percentUsed, resetsIn, elapsed, passed }
+  if (elapsed < 0.02) return { name, used: limit.percentUsed, resetsIn, elapsed }
   const leftAtReset = Math.max(0, Math.round(100 - limit.percentUsed / elapsed))
-  return { name, used: limit.percentUsed, resetsIn, elapsed, passed, leftAtReset }
+  return { name, used: limit.percentUsed, resetsIn, elapsed, leftAtReset }
 }
 
 function daysIn(data: UsageScan, which: UsageRange): UsageDay[] {
@@ -258,26 +256,7 @@ export const register: Register = on => {
         w.resetsIn === undefined ? '' : w.resetsIn <= 0 ? 'resets now' : `resets in ${duration(w.resetsIn)}`
       return line(
         w.name,
-        // The card under the bar shows while the pointer is over the bar.
-        <Box key={`meter-${limit.kind}`}>
-          {hasSvg ? svg(meterSvg(140, w.used, marker), `${w.name} meter`) : <Text color="blue">{meterText(30, w.used)}</Text>}
-          {w.passed !== undefined && (
-            <Box
-              position="absolute"
-              top={1}
-              left={0}
-              width={44}
-              display="none"
-              hover={{ display: 'flex' }}
-              borderStyle="round"
-              borderDimColor
-              backgroundColor="#2b2b2b"
-              paddingX={1}
-            >
-              <Text color="#e5e5e5">{w.passed}</Text>
-            </Box>
-          )}
-        </Box>,
+        hasSvg ? svg(meterSvg(140, w.used, marker), `${w.name} meter`) : <Text color="blue">{meterText(30, w.used)}</Text>,
         <Box flexDirection="row" gap={1}>
           <Box width={10}>
             <Text>{`${Math.round(w.used)}% used`}</Text>
@@ -304,10 +283,35 @@ export const register: Register = on => {
         )
       : line('Trend', <Text dimColor>{failure ? `Scan failed: ${failure}` : 'Reading the transcripts...'}</Text>)
 
+    // The card shows above the band while the pointer is over the icon.
+    const info = (
+      <Box key="info" position="absolute" top={0} right={0}>
+        <Text dimColor>ⓘ</Text>
+        <Box
+          position="absolute"
+          bottom={1}
+          right={0}
+          width={60}
+          flexDirection="column"
+          gap={1}
+          display="none"
+          hover={{ display: 'flex' }}
+          borderStyle="round"
+          borderDimColor
+          backgroundColor="#2b2b2b"
+          paddingX={1}
+        >
+          <Text color="#e5e5e5">{LINE_HELP}</Text>
+          <Text color="#e5e5e5">{AMOUNT_HELP}</Text>
+        </Box>
+      </Box>
+    )
+
     return (
       <Box flexDirection="column">
         {meters}
         {trend}
+        {info}
       </Box>
     )
   })
